@@ -29,7 +29,7 @@ test = read_test_data('data/test.tsv')
 
 #train.head()
 
-###########################  Split the dataset into "Condition" and "Label" ##########################
+###########################  Split the dataset into "Question" and "Label" ##########################
 
 # Difference between train['title'] and train['title'].values
 # with ID and without ID
@@ -93,8 +93,33 @@ words_counts = word_counting.count_words(words)
 
 # Get the top three popular tags and words
 
-most_common_tags = sorted(tags_counts.items(), key=lambda x: x[1], reverse=True)[:3]
+most_common_tags = sorted(tags_counts.items(), key=lambda x: x[1], reverse=True)[:3] # x is {'key':'value'}
 most_common_words = sorted(words_counts.items(), key=lambda x: x[1], reverse=True)[:3]
 #[('javascript', 19078), ('c#', 19077), ('java', 18661)]
 #[('using', 8278), ('php', 5614), ('java', 5501)]
+
+
+######################################### Bag of words ########################################
+import bag_of_words
+
+dict_size = 5000
+index_to_words = sorted(words_counts.keys(),key=lambda x : words_counts[x],reverse = True)[:dict_size] # word(key) is the index, frequency(value), x is the key
+words_to_index = {word: i for i, word in enumerate(index_to_words)} # enumerate() gives the word an index
+ALL_WORDS = words_to_index.keys()
+
+
+#Apply the implemented function to all samples (this might take up to a minute):
+#Transform the data to sparse representation is to store the useful information efficiently. There are many types of such representations, however slkearn algorithms can work only with csr matrix, so we will use this one.
+from scipy import sparse as sp_sparse
+x_train_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_train])
+x_validation_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_validataion])
+x_test_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_test])
+print('x_train shape ', x_train_bag.shape)
+print('x_validation shape ', x_validation_bag.shape)
+print('x_test shape ', x_test_bag.shape)
+
+#x_train shape  (100000, 5000)
+#x_validation shape  (30000, 5000)
+#x_test shape  (20000, 5000)
+
 
