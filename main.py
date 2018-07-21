@@ -37,7 +37,7 @@ x_train = train['title'].values
 y_train = train['tags'].values
 
 #Question: Why we need validation set?
-x_validataion = validation['title'].values
+x_validation = validation['title'].values
 y_validation = validation['tags'].values
 
 x_test = test['title'].values
@@ -63,7 +63,7 @@ preprocessed_results = '\n'.join(preprocessed_questions)
 ###################################  PREPROCESS THE CONDITION TEXT ###################################
 
 x_train = [preprocess.text_prepare(question) for question in x_train]
-x_validataion = [preprocess.text_prepare(question) for question in x_validataion]
+x_validation = [preprocess.text_prepare(question) for question in x_validation]
 x_test = [preprocess.text_prepare(question) for question in x_test]
 
 #y_train = [preprocess.text_prepare(question) for question in y_train]
@@ -112,16 +112,30 @@ ALL_WORDS = words_to_index.keys()
 #Transform the data to sparse representation is to store the useful information efficiently. There are many types of such representations, however slkearn algorithms can work only with csr matrix, so we will use this one.
 from scipy import sparse as sp_sparse
 x_train_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_train])
-x_validation_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_validataion])
+x_validation_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_validation])
 x_test_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_test])
 print('x_train shape ', x_train_bag.shape)
 print('x_validation shape ', x_validation_bag.shape)
 print('x_test shape ', x_test_bag.shape)
 
+#output
 #x_train shape  (100000, 5000)
 #x_validation shape  (30000, 5000)
 #x_test shape  (20000, 5000)
 
+#For the 10th row in X_train_mybag find how many non-zero elements it has. In this task the answer (variable non_zero_elements_count) should be a number, e.g. 20.
+row = x_train_bag[10].toarray()[0]
+non_zero_elements_count = (row > 0).sum()
+print(non_zero_elements_count)
+
+######################################### TF-IDF ########################################
+import tf_idf
+
+x_train_tfidf, x_val_tfidf, x_test_tfidf, tfidf_vocab = tf_idf.tfidf_features(x_train, x_validation, x_test)
+tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
+
+print(tfidf_vocab['c++'])
+print(tfidf_reversed_vocab[1976])
 
 
 
