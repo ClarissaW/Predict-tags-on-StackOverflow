@@ -100,7 +100,7 @@ most_common_words = sorted(words_counts.items(), key=lambda x: x[1], reverse=Tru
 
 
 ######################################### Bag of words ########################################
-import bag_of_words
+import bag_of_words  # import the file of bag of words and call the bag of words function
 
 dict_size = 5000
 index_to_words = sorted(words_counts.keys(),key=lambda x : words_counts[x],reverse = True)[:dict_size] # word(key) is the index, frequency(value), x is the key
@@ -121,5 +121,7 @@ print('x_test shape ', x_test_bag.shape)
 #x_train shape  (100000, 5000)
 #x_validation shape  (30000, 5000)
 #x_test shape  (20000, 5000)
+
+
 
 
