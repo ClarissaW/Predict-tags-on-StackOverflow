@@ -114,29 +114,37 @@ from scipy import sparse as sp_sparse
 x_train_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_train])
 x_validation_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_validation])
 x_test_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_test])
-print('x_train shape ', x_train_bag.shape)
-print('x_validation shape ', x_validation_bag.shape)
-print('x_test shape ', x_test_bag.shape)
+#print('x_train shape ', x_train_bag.shape)
+#print('x_validation shape ', x_validation_bag.shape)
+#print('x_test shape ', x_test_bag.shape)
 
-#output
+"""
 #x_train shape  (100000, 5000)
 #x_validation shape  (30000, 5000)
 #x_test shape  (20000, 5000)
+"""
 
 #For the 10th row in X_train_mybag find how many non-zero elements it has. In this task the answer (variable non_zero_elements_count) should be a number, e.g. 20.
 row = x_train_bag[10].toarray()[0]
 non_zero_elements_count = (row > 0).sum() #len([i for i in row if i > 0])
-print(non_zero_elements_count)
+#print(non_zero_elements_count)
+"""
+    7
+"""
 
 ######################################### TF-IDF ########################################
 import tf_idf
 
-x_train_tfidf, x_val_tfidf, x_test_tfidf, tfidf_vocab = tf_idf.tfidf_features(x_train, x_validation, x_test)
+x_train_tfidf, x_validation_tfidf, x_test_tfidf, tfidf_vocab = tf_idf.tfidf_features(x_train, x_validation, x_test)
 tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
 
-print(tfidf_vocab['c++'])
-print(tfidf_reversed_vocab[1976])
+#print(tfidf_vocab['c++'])
+#print(tfidf_reversed_vocab[1976])
 
+"""
+    1976
+    c++
+"""
 ################################ MultiLabel Classifier ###################################
 #Multiple tags, transform labels in a binary form and the prediction will be a mask of 0s and 1s. For this purpose it is convenient to use [MultiLabelBinarizer]
 
@@ -145,7 +153,40 @@ mlb = MultiLabelBinarizer(classes=sorted(tags_counts.keys()))
 #mlb.fit_transform(data) means that generate a vector and the length will be equal to classes' length, 0 and 1 represents whether the data has those tags.
 y_train = mlb.fit_transform(y_train)
 y_validation = mlb.fit_transform(y_validation)
-print(multilabels)
+#print(mlb)
 
+######################################## Train Classifier ###########################################
+import train_classifier
+classifier_bag = train_classifier.train_classifier(x_train_bag, y_train)
+classifier_tfidf = train_classifier.train_classifier(x_train_tfidf, y_train)
 
+########### Apply the classifier on the validation data to predict and get the score ###########
 
+y_val_predicted_labels_bag = classifier_bag.predict(x_validation_bag)
+y_val_predicted_scores_bag = classifier_bag.decision_function(x_validation_bag)
+
+y_val_predicted_labels_tfidf = classifier_tfidf.predict(x_validation_tfidf)
+y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(x_validation_tfidf)
+
+# Take a look at the performance of the classifier
+y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+y_val_inversed = mlb.inverse_transform(y_validation)
+for i in range(3):
+    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
+
+"""
+    Title:    odbc_exec always fail
+    True labels:    php,sql
+    Predicted labels:
+    
+    
+    Title:    access base classes variable within child class
+    True labels:    javascript
+    Predicted labels:
+    
+    
+    Title:    contenttype application json required rails
+    True labels:    ruby,ruby-on-rails
+    Predicted labels:    json,ruby-on-rails
+
+"""
