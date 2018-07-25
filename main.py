@@ -219,12 +219,30 @@ for i in range(3):
 
 """
 
-############################################ Evaluation ###############################################
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import average_precision_score
-from sklearn.metrics import recall_score
+############################################ Evaluation ###########################################
+import evaluation
 
+print('Bag-of-words-Evaluation')
+evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_bag)
+evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_bag)
 
+print('Tfidf-Evaluation')
+evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_tfidf)
+evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_tfidf)
+
+"""
+Bag-of-words-Evaluation
+Accuray is 0.025133333333333334
+F1 is 0.4916203949925084
+Recall is 0.827841394633396
+ROC is 0.9412071240727703
+Average Precision is 0.5125256747591636
+
+Tfidf-Evaluation
+Accuray is 0.23703333333333335
+F1 is 0.6620335890597764
+Recall is 0.7313621603144762
+ROC is 0.9416773847797864
+Average Precision is 0.5366652157984154
+"""
 
