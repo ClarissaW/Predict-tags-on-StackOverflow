@@ -125,7 +125,7 @@ print('x_test shape ', x_test_bag.shape)
 
 #For the 10th row in X_train_mybag find how many non-zero elements it has. In this task the answer (variable non_zero_elements_count) should be a number, e.g. 20.
 row = x_train_bag[10].toarray()[0]
-non_zero_elements_count = (row > 0).sum()
+non_zero_elements_count = (row > 0).sum() #len([i for i in row if i > 0])
 print(non_zero_elements_count)
 
 ######################################### TF-IDF ########################################
@@ -136,6 +136,16 @@ tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
 
 print(tfidf_vocab['c++'])
 print(tfidf_reversed_vocab[1976])
+
+################################ MultiLabel Classifier ###################################
+#Multiple tags, transform labels in a binary form and the prediction will be a mask of 0s and 1s. For this purpose it is convenient to use [MultiLabelBinarizer]
+
+from sklearn.preprocessing import MultiLabelBinarizer
+mlb = MultiLabelBinarizer(classes=sorted(tags_counts.keys()))
+#mlb.fit_transform(data) means that generate a vector and the length will be equal to classes' length, 0 and 1 represents whether the data has those tags.
+y_train = mlb.fit_transform(y_train)
+y_validation = mlb.fit_transform(y_validation)
+print(multilabels)
 
 
 
