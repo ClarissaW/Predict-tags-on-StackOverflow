@@ -4,8 +4,6 @@
 #NLTK — a platform to work with natural language.
 import text_prepare as preprocess
 
-
-
 ##############################  Read the data from the file as csv format #############################
 from ast import literal_eval
 #ast.literal_eval raises an exception if the input isn't a valid Python datatype, so the code won't be executed if it's not.
@@ -169,11 +167,14 @@ y_val_predicted_labels_tfidf = classifier_tfidf.predict(x_validation_tfidf)
 y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(x_validation_tfidf)
 
 # Take a look at the performance of the classifier
+# Transform 0 1 vectors to tags in order to compare the tags
 y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
 y_val_inversed = mlb.inverse_transform(y_validation)
 for i in range(3):
     print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
 
+# Compare between these two classifiers, it seems that RidgeClassifier is better than logistic regresion classifier
+# Result for logistic regression
 """
     Title:    odbc_exec always fail
     True labels:    php,sql
@@ -190,3 +191,40 @@ for i in range(3):
     Predicted labels:    json,ruby-on-rails
 
 """
+# Result for RidgeClassifier
+"""
+    Title:    odbc_exec always fail
+    True labels:    php,sql
+    Predicted labels:
+
+
+    Title:    access base classes variable within child class
+    True labels:    javascript
+    Predicted labels:    class
+
+
+    Title:    contenttype application json required rails
+    True labels:    ruby,ruby-on-rails
+    Predicted labels:    json,ruby,ruby-on-rails,ruby-on-rails-3
+
+
+    Title:    sessions sinatra used pass variable
+    True labels:    ruby,session
+    Predicted labels:    php,ruby,session
+
+
+    Title:    getting error type json exist postgresql rake db migrate
+    True labels:    json,ruby,ruby-on-rails
+    Predicted labels:    json,ruby-on-rails
+
+"""
+
+############################################ Evaluation ###############################################
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import average_precision_score
+from sklearn.metrics import recall_score
+
+
+
