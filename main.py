@@ -112,9 +112,9 @@ from scipy import sparse as sp_sparse
 x_train_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_train])
 x_validation_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_validation])
 x_test_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(text, words_to_index, dict_size)) for text in x_test])
-#print('x_train shape ', x_train_bag.shape)
-#print('x_validation shape ', x_validation_bag.shape)
-#print('x_test shape ', x_test_bag.shape)
+print('x_train shape ', x_train_bag.shape)
+print('x_validation shape ', x_validation_bag.shape)
+print('x_test shape ', x_test_bag.shape)
 
 """
 #x_train shape  (100000, 5000)
@@ -125,7 +125,7 @@ x_test_bag = sp_sparse.vstack([sp_sparse.csr_matrix(bag_of_words.bag_of_words(te
 #For the 10th row in X_train_mybag find how many non-zero elements it has. In this task the answer (variable non_zero_elements_count) should be a number, e.g. 20.
 row = x_train_bag[10].toarray()[0]
 non_zero_elements_count = (row > 0).sum() #len([i for i in row if i > 0])
-#print(non_zero_elements_count)
+print(non_zero_elements_count)
 """
     7
 """
@@ -136,8 +136,8 @@ import tf_idf
 x_train_tfidf, x_validation_tfidf, x_test_tfidf, tfidf_vocab = tf_idf.tfidf_features(x_train, x_validation, x_test)
 tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
 
-#print(tfidf_vocab['c++'])
-#print(tfidf_reversed_vocab[1976])
+print(tfidf_vocab['c++'])
+print(tfidf_reversed_vocab[1976])
 
 """
     1976
@@ -168,10 +168,10 @@ y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(x_validation_t
 
 # Take a look at the performance of the classifier
 # Transform 0 1 vectors to tags in order to compare the tags
-#y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
-#y_val_inversed = mlb.inverse_transform(y_validation)
-#for i in range(3):
-#    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
+y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+y_val_inversed = mlb.inverse_transform(y_validation)
+for i in range(3):
+    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
 
 # Compare between these two classifiers, it seems that RidgeClassifier is better than logistic regresion classifier
 # Result for logistic regression
@@ -220,15 +220,15 @@ y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(x_validation_t
 """
 
 ############################################ Evaluation ###########################################
-#import evaluation
-#
-#print('Bag-of-words-Evaluation')
-#evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_bag)
-#evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_bag)
-#
-#print('Tfidf-Evaluation')
-#evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_tfidf)
-#evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_tfidf)
+import evaluation
+
+print('Bag-of-words-Evaluation')
+evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_bag)
+evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_bag)
+
+print('Tfidf-Evaluation')
+evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_tfidf)
+evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_tfidf)
 
 """
 Bag-of-words-Evaluation
@@ -247,10 +247,28 @@ Average Precision is 0.5366652157984154
 """
 #
 ################## plot ROC curve for the case of multi-label classification ##################
+import plot_roc  # Comment this when running the program
 
-import plot_roc
+########################## Analysis of the most important features ############################
+#Look at the features (words or n-grams) that are used with the largest weigths in the model.
 
+import analyze_results
 
+analyze_results.words_for_tag(classifier_tfidf, 'c', mlb.classes, tfidf_reversed_vocab, ALL_WORDS)
+analyze_results.words_for_tag(classifier_tfidf, 'c++', mlb.classes, tfidf_reversed_vocab, ALL_WORDS)
+analyze_results.words_for_tag(classifier_tfidf, 'linux', mlb.classes, tfidf_reversed_vocab, ALL_WORDS)
 
-
+"""
+    Tag:    c
+    Top positive words:    pointer, scanf, malloc, c c++, c
+    Top negative words:    objective c, objective, java, python, php
+    
+    Tag:    c++
+    Top positive words:    mfc, boost, opencv, qt, c++
+    Top negative words:    java, python, c#, php, javascript
+    
+    Tag:    linux
+    Top positive words:    ubuntu, linux using, kernel space, linux c, linux
+    Top negative words:    run bash, c#, c unix, javascript, parent process
+"""
 
