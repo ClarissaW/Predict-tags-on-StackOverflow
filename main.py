@@ -168,10 +168,10 @@ y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(x_validation_t
 
 # Take a look at the performance of the classifier
 # Transform 0 1 vectors to tags in order to compare the tags
-y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
-y_val_inversed = mlb.inverse_transform(y_validation)
-for i in range(3):
-    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
+#y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+#y_val_inversed = mlb.inverse_transform(y_validation)
+#for i in range(3):
+#    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(x_validation[i], ','.join(y_val_inversed[i]), ','.join(y_val_pred_inversed[i])))
 
 # Compare between these two classifiers, it seems that RidgeClassifier is better than logistic regresion classifier
 # Result for logistic regression
@@ -220,15 +220,15 @@ for i in range(3):
 """
 
 ############################################ Evaluation ###########################################
-import evaluation
-
-print('Bag-of-words-Evaluation')
-evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_bag)
-evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_bag)
-
-print('Tfidf-Evaluation')
-evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_tfidf)
-evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_tfidf)
+#import evaluation
+#
+#print('Bag-of-words-Evaluation')
+#evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_bag)
+#evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_bag)
+#
+#print('Tfidf-Evaluation')
+#evaluation.evaluation_true_pred(y_validation, y_val_predicted_labels_tfidf)
+#evaluation.evaluation_true_scores(y_validation, y_val_predicted_scores_tfidf)
 
 """
 Bag-of-words-Evaluation
@@ -245,4 +245,12 @@ Recall is 0.7313621603144762
 ROC is 0.9416773847797864
 Average Precision is 0.5366652157984154
 """
+#
+################## plot ROC curve for the case of multi-label classification ##################
+
+import plot_roc
+
+
+
+
 
